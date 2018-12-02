@@ -37,13 +37,13 @@ calculateFirstDuplicatedFrequency frequencyCombos frequenciesModifiers currentFr
   case frequenciesModifiers of
     [] ->  0
     [x] ->
-       Debug.log "one item" calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) frequencyInput (currentFrequency + x)
+       calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) frequencyInput (currentFrequency + x)
     (x::xs) -> 
       if Set.member (currentFrequency + x) frequencyCombos then
-        Debug.log "in if - currentFrequency" (currentFrequency + x)
+        currentFrequency + x
 
       else
-        Debug.log "in else" calculateFirstDuplicatedFrequency (Debug.log "acc" (Set.insert (currentFrequency + x) frequencyCombos)) xs (currentFrequency + x)
+        calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) xs (currentFrequency + x)
         -- let _ = Debug.log "x is" x
 
 calculateFrequency : List Int -> Int
