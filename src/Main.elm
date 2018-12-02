@@ -9,30 +9,47 @@ main =
 
 -- MODEL
 
-type alias Model = Int
+type alias Model =
+  { content: String
+  }
 
 init : Model
 init = 
-  0
+  { content = "" }
 
 -- UPDATE
  
-type Msg = Increment | Decrement
+type Msg
+  = Change String
 
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Increment ->
-      model + 1
-    
-    Decrement ->
-      model - 1 
+    Change newContent ->
+      { model | content = newContent }
 
 
 -- VIEW
+
+calculateFirstDuplicatedFrequency : List Int -> List Int -> Int -> Int
+calculateFirstDuplicatedFrequency frequencyCombos frequenciesModifiers currentFrequency =
+  case frequenciesModifiers of
+    [] ->  0
+    [x] ->
+       calculateFirstDuplicatedFrequency (frequencyCombos ++ [(currentFrequency + x)]) [3, 3, 4, -2, -4] (currentFrequency + x)
+    (x::xs) -> 
+      if List.member (currentFrequency + x) frequencyCombos then
+        currentFrequency + x
+
+      else
+        calculateFirstDuplicatedFrequency (frequencyCombos ++ [currentFrequency + x]) xs (currentFrequency + x)
+        -- let _ = Debug.log "x is" x
+
+
+
 calculateFrequency : List Int -> Int
-calculateFrequency frequency =
-  List.sum frequency
+calculateFrequency frequencies =
+  List.sum frequencies
 
 createText : Int -> Html Msg
 createText finalNumber = 
@@ -40,4 +57,9 @@ createText finalNumber =
 
 view : Model -> Html Msg
 view model =
-  div [] [ createText ( calculateFrequency frequencyInput) ]
+  div []
+    [ text "First puzzle"
+    , createText (calculateFrequency frequencyInput)
+    , text "Second puzzle"
+    , createText (calculateFirstDuplicatedFrequency [] [3, 3, 4, -2, -4] 0)
+    ]
