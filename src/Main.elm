@@ -1,4 +1,5 @@
 import Browser
+import Set
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (..)
@@ -31,21 +32,19 @@ update msg model =
 
 -- VIEW
 
-calculateFirstDuplicatedFrequency : List Int -> List Int -> Int -> Int
+calculateFirstDuplicatedFrequency : Set.Set Int -> List Int -> Int -> Int
 calculateFirstDuplicatedFrequency frequencyCombos frequenciesModifiers currentFrequency =
   case frequenciesModifiers of
     [] ->  0
     [x] ->
-       calculateFirstDuplicatedFrequency (frequencyCombos ++ [(currentFrequency + x)]) [3, 3, 4, -2, -4] (currentFrequency + x)
+       Debug.log "one item" calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) frequencyInput (currentFrequency + x)
     (x::xs) -> 
-      if List.member (currentFrequency + x) frequencyCombos then
-        currentFrequency + x
+      if Set.member (currentFrequency + x) frequencyCombos then
+        Debug.log "in if - currentFrequency" (currentFrequency + x)
 
       else
-        calculateFirstDuplicatedFrequency (frequencyCombos ++ [currentFrequency + x]) xs (currentFrequency + x)
+        Debug.log "in else" calculateFirstDuplicatedFrequency (Debug.log "acc" (Set.insert (currentFrequency + x) frequencyCombos)) xs (currentFrequency + x)
         -- let _ = Debug.log "x is" x
-
-
 
 calculateFrequency : List Int -> Int
 calculateFrequency frequencies =
@@ -61,5 +60,5 @@ view model =
     [ text "First puzzle"
     , createText (calculateFrequency frequencyInput)
     , text "Second puzzle"
-    , createText (calculateFirstDuplicatedFrequency [] [3, 3, 4, -2, -4] 0)
+    , createText (calculateFirstDuplicatedFrequency Set.empty frequencyInput 0)
     ]
