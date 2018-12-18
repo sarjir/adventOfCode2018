@@ -47,8 +47,8 @@ checkCombos : Set Int -> Int -> Bool
 checkCombos frequencyCombos frequency =
   Set.member frequency frequencyCombos
 
-calculateFirstDuplicatedFrequency : List Int -> Set Int -> Int -> Int
-calculateFirstDuplicatedFrequency frequenciesModifiers frequencyCombos currentFrequency =
+calculateFirstDuplicatedFrequency : List Int -> List Int -> Set Int -> Int -> Int
+calculateFirstDuplicatedFrequency originalFrequencies frequenciesModifiers frequencyCombos currentFrequency =
   let 
     createNewFreq = addFrequency currentFrequency
     updateCombos = updateFrequencySet frequencyCombos
@@ -57,13 +57,13 @@ calculateFirstDuplicatedFrequency frequenciesModifiers frequencyCombos currentFr
     case frequenciesModifiers of
       [] ->  0
       [x] ->
-        calculateFirstDuplicatedFrequency frequencyInput (updateCombos (createNewFreq x)) (createNewFreq x)
+        calculateFirstDuplicatedFrequency originalFrequencies originalFrequencies (updateCombos (createNewFreq x)) (createNewFreq x)
       (x::xs) ->
         if checkFrequencyCombos (createNewFreq x) then
           createNewFreq x
 
         else
-          calculateFirstDuplicatedFrequency xs (updateCombos (createNewFreq x)) (createNewFreq x)
+          calculateFirstDuplicatedFrequency originalFrequencies xs (updateCombos (createNewFreq x)) (createNewFreq x)
         -- let _ = Debug.log "x is" x
 
 calculateFrequency : List Int -> Int
@@ -80,5 +80,5 @@ view model =
     [ text "First puzzle"
     , createText (calculateFrequency frequencyInput)
     , text "Second puzzle"
-    , createText (calculateFirstDuplicatedFrequency frequencyInput Set.empty 0)
+    , createText (calculateFirstDuplicatedFrequency frequencyInput frequencyInput Set.empty 0)
     ]
