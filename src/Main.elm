@@ -1,5 +1,5 @@
 import Browser
-import Set
+import Set exposing (Set)
 import Html exposing (Html, button, div, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (..)
@@ -31,19 +31,39 @@ update msg model =
 
 
 -- VIEW
+-- starting : List Int -> (Set Int -> Int -> Int)
+-- starting list
+--   calculateFirstDuplicatedFrequency list
 
-calculateFirstDuplicatedFrequency : Set.Set Int -> List Int -> Int -> Int
-calculateFirstDuplicatedFrequency frequencyCombos frequenciesModifiers currentFrequency =
-  case frequenciesModifiers of
-    [] ->  0
-    [x] ->
-       calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) frequencyInput (currentFrequency + x)
-    (x::xs) -> 
-      if Set.member (currentFrequency + x) frequencyCombos then
-        currentFrequency + x
+addFrequency : Int -> Int -> Int
+addFrequency currentFrequency frequency =
+  currentFrequency + frequency
 
-      else
-        calculateFirstDuplicatedFrequency (Set.insert (currentFrequency + x) frequencyCombos) xs (currentFrequency + x)
+updateFrequencySet : Set Int -> Int -> Set Int
+updateFrequencySet frequencyCombos newFreq =
+  Set.insert newFreq frequencyCombos
+
+checkCombos : Set Int -> Int -> Bool
+checkCombos frequencyCombos frequency =
+  Set.member frequency frequencyCombos
+
+calculateFirstDuplicatedFrequency : List Int -> Set Int -> Int -> Int
+calculateFirstDuplicatedFrequency frequenciesModifiers frequencyCombos currentFrequency =
+  let 
+    createNewFreq = addFrequency currentFrequency
+    updateCombos = updateFrequencySet frequencyCombos
+    checkFrequencyCombos = checkCombos frequencyCombos
+  in 
+    case frequenciesModifiers of
+      [] ->  0
+      [x] ->
+        calculateFirstDuplicatedFrequency frequencyInput (updateCombos (createNewFreq x)) (createNewFreq x)
+      (x::xs) ->
+        if checkFrequencyCombos (createNewFreq x) then
+          createNewFreq x
+
+        else
+          calculateFirstDuplicatedFrequency xs (updateCombos (createNewFreq x)) (createNewFreq x)
         -- let _ = Debug.log "x is" x
 
 calculateFrequency : List Int -> Int
@@ -60,5 +80,5 @@ view model =
     [ text "First puzzle"
     , createText (calculateFrequency frequencyInput)
     , text "Second puzzle"
-    , createText (calculateFirstDuplicatedFrequency Set.empty frequencyInput 0)
+    , createText (calculateFirstDuplicatedFrequency frequencyInput Set.empty 0)
     ]
