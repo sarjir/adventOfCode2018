@@ -6,20 +6,20 @@ import Html.Attributes exposing (..)
 import Frequency exposing (frequencyInput)
 
 main =
-  view "Hello"
+  div []
+    [ text "First puzzle"
+    , createText (calculateFrequency frequencyInput)
+    , text "Second puzzle"
+    , createText (calculateFirstDuplicatedFrequency frequencyInput frequencyInput Set.empty 0)
+    ]
 
+createText : Int -> Html msg
+createText finalNumber = 
+  div [] [ text (String.fromInt finalNumber) ]
 
-addFrequency : Int -> Int -> Int
-addFrequency currentFrequency frequency =
-  currentFrequency + frequency
-
-updateFrequencySet : Set Int -> Int -> Set Int
-updateFrequencySet frequencyCombos newFreq =
-  Set.insert newFreq frequencyCombos
-
-checkCombos : Set Int -> Int -> Bool
-checkCombos frequencyCombos frequency =
-  Set.member frequency frequencyCombos
+calculateFrequency : List Int -> Int
+calculateFrequency frequencies =
+  List.sum frequencies
 
 calculateFirstDuplicatedFrequency : List Int -> List Int -> Set Int -> Int -> Int
 calculateFirstDuplicatedFrequency originalFrequencies frequenciesModifiers frequencyCombos currentFrequency =
@@ -35,23 +35,17 @@ calculateFirstDuplicatedFrequency originalFrequencies frequenciesModifiers frequ
       (x::xs) ->
         if checkFrequencyCombos (createNewFreq x) then
           createNewFreq x
-
         else
           calculateFirstDuplicatedFrequency originalFrequencies xs (updateCombos (createNewFreq x)) (createNewFreq x)
 
-calculateFrequency : List Int -> Int
-calculateFrequency frequencies =
-  List.sum frequencies
+addFrequency : Int -> Int -> Int
+addFrequency currentFrequency frequency =
+  currentFrequency + frequency
 
-createText : Int -> Html msg
-createText finalNumber = 
-  div [] [ text (String.fromInt finalNumber) ]
+updateFrequencySet : Set Int -> Int -> Set Int
+updateFrequencySet frequencyCombos newFreq =
+  Set.insert newFreq frequencyCombos
 
-view : String -> Html msg
-view model =
-  div []
-    [ text "First puzzle"
-    , createText (calculateFrequency frequencyInput)
-    , text "Second puzzle"
-    , createText (calculateFirstDuplicatedFrequency frequencyInput frequencyInput Set.empty 0)
-    ]
+checkCombos : Set Int -> Int -> Bool
+checkCombos frequencyCombos frequency =
+  Set.member frequency frequencyCombos
